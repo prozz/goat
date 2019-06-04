@@ -1,4 +1,4 @@
-package http
+package api
 
 import (
 	"goat/pkg/ai"
@@ -9,13 +9,13 @@ import (
 
 type app struct {
 	generator ai.Generator
-	router *http.ServeMux
+	router    *http.ServeMux
 }
 
 func NewApp(generator ai.Generator) http.Handler {
 	app := &app{
 		generator: generator,
-		router: http.NewServeMux(),
+		router:    http.NewServeMux(),
 	}
 
 	app.router.Handle("/fakenews", app.fakenews())
@@ -25,7 +25,7 @@ func NewApp(generator ai.Generator) http.Handler {
 
 func (a *app) fakenews() http.HandlerFunc {
 	// one time init...
-	return func (w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
 		title := a.generator.RandomTitle()
 		if title == "" {
 			w.WriteHeader(http.StatusInternalServerError)

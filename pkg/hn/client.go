@@ -7,31 +7,25 @@ import (
 	"net/http"
 )
 
-const baseUrl = "https://hacker-news.firebaseio.com/v0"
-
-type client struct {
-	topUrl  func() string
-	itemUrl func(id int) string
-}
-
 type Client interface {
 	Top() []int
 	Get(id int) Item
 }
 
 func NewClient() Client {
-	return &client{
-		topUrl: func() string {
-			return baseUrl + "/topstories.json"
-		},
-		itemUrl: func(id int) string {
-			return baseUrl + fmt.Sprintf("/item/%d.json", id)
-		},
-	}
+	return NewClientFor("https://hacker-news.firebaseio.com/v0")
+}
+
+func NewClientFor(baseUrl string) Client {
+	return &client{baseUrl: baseUrl}
+}
+
+type client struct {
+	baseUrl string
 }
 
 func (c *client) Top() []int {
-	response, err := http.Get(c.topUrl())
+	response, err := http.Get(fmt.Sprintf("%s/topstories.json", c.baseUrl))
 	if err != nil || response.StatusCode != 200 {
 		return nil
 	}
@@ -56,7 +50,7 @@ type Item struct {
 }
 
 func (c *client) Get(id int) Item {
-	response, err := http.Get(c.itemUrl(id))
+	response, err := http.Get(fmt.Sprintf("%s/item/%d.json", c.baseUrl, id))
 	if err != nil || response.StatusCode != 200 {
 		return Item{}
 	}

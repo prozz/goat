@@ -3,13 +3,13 @@ package main
 import (
 	"bytes"
 	"goat/pkg/ai"
-	goat "goat/pkg/http"
+	goat "goat/pkg/api"
 	"io/ioutil"
 	"log"
 	"net/http"
 )
 
-func main()  {
+func main() {
 	buf, err := ioutil.ReadFile("goat-dump-v1")
 	if err != nil {
 		panic(err)
@@ -19,5 +19,3 @@ func main()  {
 	app := goat.NewApp(generator)
 	log.Fatal(http.ListenAndServe(":8080", app))
 }
-
-

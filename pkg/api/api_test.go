@@ -1,10 +1,11 @@
-package http
+package api_test
 
 import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"goat/mock"
+	"goat/pkg/api"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -23,7 +24,7 @@ func TestApiGenerator(t *testing.T) {
 		req, err := http.NewRequest("GET", "/fakenews", nil)
 		require.NoError(t, err)
 
-		NewApp(generator).ServeHTTP(w, req)
+		api.NewApp(generator).ServeHTTP(w, req)
 
 		assert.Equal(t, 200, w.Code)
 		assert.Equal(t, "foo!", w.Body.String())
@@ -40,7 +41,7 @@ func TestApiGenerator(t *testing.T) {
 		req, err := http.NewRequest("GET", "/fakenews", nil)
 		require.NoError(t, err)
 
-		NewApp(generator).ServeHTTP(w, req)
+		api.NewApp(generator).ServeHTTP(w, req)
 
 		assert.Equal(t, 500, w.Code)
 		assert.Empty(t, w.Body.String())

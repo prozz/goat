@@ -1,4 +1,4 @@
-package ai
+package ai_test
 
 import (
 	"bytes"
@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"goat/mock"
+	"goat/pkg/ai"
 	"goat/pkg/hn"
 	"io/ioutil"
 	"os"
@@ -32,7 +33,7 @@ func TestDumper(t *testing.T) {
 		client.EXPECT().Top().Return([]int{1})
 		client.EXPECT().Get(1).Return(hn.Item{Title: "A"})
 
-		err := NewDumper(client).Dump(&errWriter{})
+		err := ai.NewDumper(client).Dump(&errWriter{})
 		require.Error(t, err)
 	})
 
@@ -47,7 +48,7 @@ func TestDumper(t *testing.T) {
 		client.EXPECT().Get(2).Return(hn.Item{Title: "B"})
 
 		var b bytes.Buffer
-		err := NewDumper(client).Dump(&b)
+		err := ai.NewDumper(client).Dump(&b)
 		require.NoError(t, err)
 		assert.Equal(t, "A\nB\n", b.String())
 	})
@@ -61,7 +62,7 @@ func TestDumperIntegration(t *testing.T) {
 	require.NoError(t, err)
 	defer f.Close()
 
-	err = NewDumper(hn.NewClient()).Dump(f)
+	err = ai.NewDumper(hn.NewClient()).Dump(f)
 	require.NoError(t, err)
 
 	spew.Dump(f.Name())
