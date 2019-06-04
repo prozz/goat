@@ -3,16 +3,17 @@ package ai_test
 import (
 	"bytes"
 	"errors"
+	"goat/pkg/ai"
+	"goat/pkg/hn"
+	"goat/pkg/hn/mock"
+	"io/ioutil"
+	"os"
+	"testing"
+
 	"github.com/davecgh/go-spew/spew"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"goat/mock"
-	"goat/pkg/ai"
-	"goat/pkg/hn"
-	"io/ioutil"
-	"os"
-	"testing"
 )
 
 type errWriter struct {
@@ -28,7 +29,7 @@ func TestDumper(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		client := mock.NewMockHnClient(ctrl)
+		client := mock.NewMockClient(ctrl)
 
 		client.EXPECT().Top().Return([]int{1})
 		client.EXPECT().Get(1).Return(hn.Item{Title: "A"})
@@ -41,7 +42,7 @@ func TestDumper(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		client := mock.NewMockHnClient(ctrl)
+		client := mock.NewMockClient(ctrl)
 
 		client.EXPECT().Top().Return([]int{1, 2})
 		client.EXPECT().Get(1).Return(hn.Item{Title: "A"})
