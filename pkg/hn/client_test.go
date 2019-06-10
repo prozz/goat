@@ -8,14 +8,14 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 )
 
-func TestStories(t *testing.T) {
+func TestTopStories(t *testing.T) {
 
 	t.Run("status 500", func(t *testing.T) {
 		h := func(w http.ResponseWriter, r *http.Request) {
+			assert.Equal(t, "/topstories.json", r.URL.Path)
 			w.WriteHeader(500)
 		}
 		ts := httptest.NewServer(http.HandlerFunc(h))
@@ -27,8 +27,9 @@ func TestStories(t *testing.T) {
 
 	t.Run("status 200", func(t *testing.T) {
 		h := func(w http.ResponseWriter, r *http.Request) {
+			assert.Equal(t, "/topstories.json", r.URL.Path)
 			w.WriteHeader(200)
-			io.WriteString(w, "[ 19216077, 19216315 ]")
+			_, _ = io.WriteString(w, "[ 19216077, 19216315 ]")
 		}
 		ts := httptest.NewServer(http.HandlerFunc(h))
 		defer ts.Close()
@@ -67,7 +68,7 @@ func TestItems(t *testing.T) {
 
 	t.Run("status 500", func(t *testing.T) {
 		s := setup(func(w http.ResponseWriter, r *http.Request) {
-			assert.True(t, strings.HasSuffix(r.URL.Path, "/123.json"))
+			assert.Equal(t, "/item/123.json", r.URL.Path)
 			w.WriteHeader(500)
 		})
 		defer s.server.Close()
@@ -78,10 +79,10 @@ func TestItems(t *testing.T) {
 
 	t.Run("status 200", func(t *testing.T) {
 		s := setup(func(w http.ResponseWriter, r *http.Request) {
-			assert.True(t, strings.HasSuffix(r.URL.Path, "/456.json"))
+			assert.Equal(t, "/item/456.json", r.URL.Path)
 			w.WriteHeader(200)
 			buf, _ := ioutil.ReadFile("testdata/item-19216428.json")
-			w.Write(buf)
+			_, _ = w.Write(buf)
 		})
 		defer s.server.Close()
 
